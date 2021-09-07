@@ -38,7 +38,9 @@ df_date.rename(columns={'No': '感染者数'}, inplace=True)
 
 st.dataframe(df_date, width=1000, height=200)
 
-if df_date.iloc[0, -1] == date.today():
+st.write('最新の入力日', df_date.index[-1])
+
+if df_date.index[-1] == date.today():
     st.write('※備考　今日のデータも入力済みです')
 else:
     st.write('※注意　今日のデータは未入力です')

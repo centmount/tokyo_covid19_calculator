@@ -1,11 +1,23 @@
+#!/usr/bin/env python3
+
+"""
+東京都の新型コロナデータから感染者数データを取得。
+期間を指定、年代を選択することで、範囲内の感染者数を計算。
+streamlitを使ったwebアプリです。
+
+出典：東京都 新型コロナウイルス陽性患者発表詳細オープンデータ
+https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv
+"""
+
 # 必要なモジュールのインポート
 import streamlit as st
 import streamlit.components.v1 as stc
-import datetime
+
 from datetime import datetime
 from datetime import date
-import pandas as pd
+from datetime import timedelta
 
+import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -40,7 +52,9 @@ st.dataframe(df_date, width=1000, height=200)
 
 st.write('最新の入力日', df_date.index[-1])
 
-if df_date.index[-1] == date.today():
+today_time = datetime.now() + timedelta(hours=9)
+today = today_time.strftime('%Y-%m-%d')
+if df_date.index[-1].strftime('%Y-%m-%d') == today:
     st.write('※備考　今日のデータも入力済みです')
 else:
     st.write('※注意　今日のデータは未入力です')
@@ -69,15 +83,15 @@ st.pyplot(fig1)
 st.sidebar.write('★感染者数を計算する期間を入力')
 start_date1 = st.sidebar.date_input('開始日を指定してください',
                              min_value=date(2020, 1, 1),
-                             max_value=date.today(),
-                             value=date.today(),
+                             max_value=today_time.date(),
+                             value=today_time.date(),
                              )
 st.sidebar.write('開始日:', start_date1)
 
 end_date1 = st.sidebar.date_input('終了日を指定してください',
                              min_value=date(2020, 1, 1),
-                             max_value=date.today(),
-                             value=date.today(),
+                             max_value=today_time.date(),
+                             value=today_time.date(),
                              )
 st.sidebar.write('終了日:', end_date1)
 st.sidebar.markdown('''

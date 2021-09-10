@@ -27,7 +27,7 @@ import japanize_matplotlib
 st.title('東京都の新型コロナ感染者数')
 
 # クリアをチェックするとキャッシュをクリア
-st.write('データを更新したい場合は「clear」をチェック。更新後はチェックを外してください')
+st.write('最新データに更新したい場合は「clear」をチェック。更新後はチェックを外してください。')
 if st.checkbox('clear'):
     caching.clear_cache()
 

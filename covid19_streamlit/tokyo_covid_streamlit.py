@@ -11,7 +11,7 @@ https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv
 
 # 必要なモジュールのインポート
 import streamlit as st
-import streamlit.components.v1 as stc
+from streamlit import caching
 
 from datetime import datetime
 from datetime import date
@@ -22,6 +22,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import japanize_matplotlib
+
+# 最初にキャッシュをクリア
+caching.clear_cache()
 
 st.title('東京都の新型コロナ感染者数')
 

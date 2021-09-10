@@ -23,10 +23,13 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import japanize_matplotlib
 
-# 最初にキャッシュをクリア
-caching.clear_cache()
 
 st.title('東京都の新型コロナ感染者数')
+
+# クリアをチェックするとキャッシュをクリア
+st.write('データを最新版に更新するため「clear」をチェックしてください')
+if st.checkbox('clear'):
+    caching.clear_cache()
 
 # 東京都 新型コロナウイルス陽性患者発表詳細オープンデータ
 url = 'https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv'

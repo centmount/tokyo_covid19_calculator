@@ -11,7 +11,7 @@ https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv
 
 # 必要なモジュールのインポート
 import streamlit as st
-import streamlit.components.v1 as stc
+from streamlit import caching
 
 from datetime import datetime
 from datetime import date
@@ -24,6 +24,11 @@ import matplotlib.dates as mdates
 import japanize_matplotlib
 
 st.title('東京都の新型コロナ感染者数')
+
+# クリアをチェックするとキャッシュをクリア
+st.write('最新データに更新したい場合は「clear」をチェック。更新後はチェックを外してください。')
+if st.checkbox('clear'):
+    caching.clear_cache()
 
 # 東京都 新型コロナウイルス陽性患者発表詳細オープンデータ
 url = 'https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv'
@@ -48,7 +53,7 @@ st.write('公表年月日ごとの感染者数データ')
 df_date = df.groupby('公表_年月日').count()
 df_date.rename(columns={'No': '感染者数'}, inplace=True)
 
-st.dataframe(df_date, width=1000, height=200)
+st.dataframe(df_date.sort_index(ascending=False), width=1000, height=200)
 
 st.write('最新の入力日', df_date.index[-1])
 
@@ -59,6 +64,21 @@ if df_date.index[-1].strftime('%Y-%m-%d') == today:
 else:
     st.write('※注意　今日のデータは未入力です')
 
+# 先週の感染者数の合計
+lastweek_start = (today_time - timedelta(days=13)).date()
+lastweek_end = (today_time - timedelta(days=7)).date()
+df_lastweek = df_date.loc[lastweek_start: lastweek_end, '感染者数']
+lastweek_sum = df_lastweek.sum()
+lastweek_mean = df_lastweek.mean()
+st.write(f'先週の感染者数( {lastweek_start} から {lastweek_end} ): 合計 {lastweek_sum} 人, 平均 {"{:.3f}".format(lastweek_mean)} 人です')
+
+# 今週の感染者数の合計
+thisweek_start = (today_time - timedelta(days=6)).date()
+thisweek_end = (today_time - timedelta(days=0)).date()
+df_thisweek = df_date.loc[thisweek_start: thisweek_end, '感染者数']
+thisweek_sum = df_thisweek.sum()
+thisweek_mean = df_thisweek.mean()
+st.write(f'今週の感染者数( {thisweek_start} から ※今日のデータ未入力かどうか注意): 合計 {thisweek_sum} 人, 平均 {"{:.3f}".format(thisweek_mean)} 人です')
 
 # 感染者数のグラフを作成
 fig1 = plt.figure(figsize=[20, 10])
@@ -100,12 +120,12 @@ st.sidebar.markdown('''
 
 # 期間で抽出
 df_span = df_date.loc[start_date1: end_date1, '感染者数']
-# 年代別・期間の合計感染者数
-df_span_sum = df_span.sum()
-
+# 期間の合計感染者数
+span_sum = df_span.sum()
+span_mean = df_span.mean()
 
 st.write('<span style="color:blue">期間を指定して感染者数を計算します</span>', unsafe_allow_html=True)
-st.write(f'<span style="color:blue">指定期間の感染者数の合計は {df_span_sum} 人です</span>', unsafe_allow_html=True)
+st.write(f'<span style="color:blue">指定期間の感染者数の合計は {span_sum} 人, 平均は {"{:.3f}".format(span_mean)} 人です。</span>', unsafe_allow_html=True)
 st.markdown('''
 ***
 ''')
@@ -126,7 +146,7 @@ df_age_date.rename(columns={'No': '感染者数'}, inplace=True)
 
 st.write('<span style="color:green">年代別の感染者数データを表示します</span>', unsafe_allow_html=True)
 st.write(f'<span style="color:green">({age})公表年月日ごとの感染者数データ</span>', unsafe_allow_html=True)
-st.dataframe(df_age_date, width=1000, height=200)
+st.dataframe(df_age_date.sort_index(ascending=False), width=1000, height=200)
 
 # 年代別の感染者数グラフを作成
 fig2 = plt.figure(figsize=[20, 10])
@@ -149,10 +169,12 @@ st.pyplot(fig2)
 # 期間で抽出
 df_age_span = df_age_date.loc[start_date1: end_date1, '感染者数']
 # 年代別・期間の合計感染者数
-df_age_span_sum = df_age_span.sum()
+age_span_sum = df_age_span.sum()
+age_span_mean = df_age_span.mean()
 
 st.write(f'<span style="color:green">期間を指定して({age})の感染者数を計算します</span>', unsafe_allow_html=True)
-st.write(f'<span style="color:green">({age})感染者数の指定期間の合計は {df_age_span_sum} 人です</span>', unsafe_allow_html=True)
+st.write(f'<span style="color:green">({age})感染者数の指定期間の合計は {age_span_sum} 人, 平均は {"{:.3f}".format(age_span_mean)} 人です。</span>', unsafe_allow_html=True)
+st.write(f'<span style="color:green">全年代に占める割合は {"{:.3f}".format(age_span_sum / span_sum *100)} % です。</span>', unsafe_allow_html=True)
 st.markdown('''
 ***
 ''')

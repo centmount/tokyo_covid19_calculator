@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import japanize_matplotlib
 
+
 st.title('東京都の新型コロナ感染者数')
 
 # クリアをチェックするとキャッシュをクリア

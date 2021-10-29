@@ -26,16 +26,11 @@ import japanize_matplotlib
 
 st.title('東京都の新型コロナ感染者数')
 
-# クリアをチェックするとキャッシュをクリア
-st.write('最新データに更新したい場合は「clear」をチェック。更新後はチェックを外してください。')
-if st.checkbox('clear'):
-    caching.clear_cache()
-
 # 東京都 新型コロナウイルス陽性患者発表詳細オープンデータ
 url = 'https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv'
 
 # オープンデータ読取、公表年月日をdatetime型に変換する関数
-@st.cache
+@st.cache(ttl=300)
 def load_data():
     df = pd.read_csv(url)
     df["公表_年月日"] = pd.to_datetime(df["公表_年月日"]).dt.date
@@ -100,7 +95,7 @@ plt.show()
 st.pyplot(fig1)
 
 
-#@title 感染者数を計算（期間を指定してください）
+# 感染者数を計算（期間を指定してください）
 st.sidebar.write('★感染者数を計算する期間を入力')
 start_date1 = st.sidebar.date_input('開始日を指定してください',
                              min_value=date(2020, 1, 1),
@@ -132,7 +127,7 @@ st.markdown('''
 ''')
 
 
-#@title 感染者の年代を選択してください
+# 感染者の年代を選択してください
 st.sidebar.write('★感染者の年代を選択してください')
 age = st.sidebar.selectbox('感染者の年代を選択してください',
     ["10歳未満", "10代", "20代", "30代", "40代", "50代", "60代", "70代", "80代", "90代", "100歳以上"])

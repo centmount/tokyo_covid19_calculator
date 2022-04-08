@@ -32,7 +32,7 @@ url = 'https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.
 # オープンデータ読取、公表年月日をdatetime型に変換する関数
 @st.cache(ttl=300)
 def load_data():
-    df = pd.read_csv(url)
+    df = pd.read_csv(url, skiprows = 500)
     df["公表_年月日"] = pd.to_datetime(df["公表_年月日"]).dt.date
     return df
 

@@ -27,7 +27,7 @@ import japanize_matplotlib
 st.title('東京都の新型コロナ感染者数')
 
 # 東京都 新型コロナウイルス陽性患者発表詳細オープンデータ
-url = 'https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients.csv'
+url = 'https://stopcovid19.metro.tokyo.lg.jp/data/130001_tokyo_covid19_patients_2022.csv'
 
 # オープンデータ読取、公表年月日をdatetime型に変換する関数
 @st.cache(ttl=300)
